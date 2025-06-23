@@ -13,3 +13,7 @@ print(div_term)
 mul = position*div_term
 print(mul)
 print(mul.shape)
+tri = torch.triu(torch.ones(1, 10, 10))
+tri_1 = torch.triu(torch.ones(1, 10, 10),diagonal=1)
+print(tri)
+print(tri_1)

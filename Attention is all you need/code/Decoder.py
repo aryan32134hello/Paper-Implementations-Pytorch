@@ -18,7 +18,7 @@ class Decoder(nn.Module):
         self.norm3 = nn.LayerNorm(self.embed_size)
 
     def forward(self,x,encoder_op,input_mask, output_mask):
-        masked_attn_op = self.masked_multiheadattention(x,x,x,mask = output_mask) # mask not implemented
+        masked_attn_op = self.masked_multiheadattention(x,x,x,mask = output_mask)
         sub_layer1_op = self.norm1(x+masked_attn_op)
         attn_op = self.multi_headattention(encoder_op,encoder_op,sub_layer1_op,mask = input_mask) # here mask is use to hide the padded tokens as they dont have any information in it.
         sub_layer2_op = self.norm2(attn_op+sub_layer1_op)

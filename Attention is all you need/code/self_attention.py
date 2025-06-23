@@ -28,7 +28,7 @@ class SelfAttention(nn.Module):
 
         attn_score = torch.matmul(query,keys.transpose(2,3))/math.sqrt(self.head_dim)
         if mask is not None:
-            attn_score = attn_score.masked_fill(mask==0,-1e9)
+            attn_score = attn_score.masked_fill(mask==0,-1e9) ## when the mask value is 0 fill it with -1e9 and when we do softmax it will become zero
         attn_prob = torch.softmax(attn_score,dim=-1)
         final_attn_score = torch.matmul(attn_prob,values)
         return final_attn_score
@@ -48,7 +48,6 @@ class SelfAttention(nn.Module):
         keys = self.keys(keys)
         query = self.queries(query)
 
-        ##mask not implemented
         ## SPLIT THE MATRIX INTO HEADS
 
         values = self.split_heads(values)
@@ -61,7 +60,7 @@ class SelfAttention(nn.Module):
         keys = keys.transpose(1,2)
         query = query.transpose(1,2)
         ## now shape -> (batch_size, heads, token_length, head_dim)
-        attn_output = self.scaled_dot_product_attention(self,query,keys,values)
+        attn_output = self.scaled_dot_product_attention(self,query,keys,values,mask)
         ## attn_output shape -> (batch_size, heads, token_length, head_dim)
         output = self.combine_heads(attn_output)
         output = self.fc_out(output)
