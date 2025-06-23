@@ -48,6 +48,7 @@ class SelfAttention(nn.Module):
         keys = self.keys(keys)
         query = self.queries(query)
 
+        ##mask not implemented
         ## SPLIT THE MATRIX INTO HEADS
 
         values = self.split_heads(values)

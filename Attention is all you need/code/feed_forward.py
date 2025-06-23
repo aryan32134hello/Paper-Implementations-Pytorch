@@ -1,14 +1,14 @@
 import torch.nn as nn
 
 class PositionWiseFeedForward(nn.Module):
-    def __init__(self,embed_size,out):
+    def __init__(self,embed_size,ff_dim):
         super(PositionWiseFeedForward,self).__init__()
 
         self.input_feature = embed_size
-        self.output_1 = out
-        self.linear_1 = nn.Linear(in_features=self.input_feature,out_features=self.output_1)
+        self.ff_dim = ff_dim
+        self.linear_1 = nn.Linear(in_features=self.input_feature,out_features=self.ff_dim)
         self.activation = nn.ReLU()
-        self.linear_2 = nn.Linear(in_features=self.output_1,out_features=self.input_feature)
+        self.linear_2 = nn.Linear(in_features=self.ff_dim,out_features=self.input_feature)
     
     def forward(self,input):
         
