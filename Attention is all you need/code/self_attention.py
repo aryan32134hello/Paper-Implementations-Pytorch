@@ -12,15 +12,15 @@ class SelfAttention(nn.Module):
 
         assert (self.head_dim*heads==embed_size), "Embed size needs to be div by heads"
 
-        self.values = nn.Linear(self.head_dim,self.head_dim,bias=False)
-        self.keys = nn.Linear(self.head_dim,self.head_dim,bias=False)
-        self.queries = nn.Linear(self.head_dim,self.head_dim,bias=False)
+        self.values = nn.Linear(self.embed_size,self.embed_size,bias=False)
+        self.keys = nn.Linear(self.embed_size,self.embed_size,bias=False)
+        self.queries = nn.Linear(self.embed_size,self.embed_size,bias=False)
         self.fc_out = nn.Linear(heads*self.head_dim, embed_size,bias=False)
 
     
     def split_heads(self,X):
 
-        batch_size, token_length, embed_size = X.shape()
+        batch_size, token_length, embed_size = X.shape
         X = X.reshape(batch_size,token_length,self.heads,self.head_dim)
         return X
 
@@ -35,7 +35,7 @@ class SelfAttention(nn.Module):
 
     def combine_heads(self,X):
 
-        batch_size,heads, token_length, head_dim = X.shape()
+        batch_size,heads, token_length, head_dim = X.shape
         X = X.transpose(1,2)
         return X.reshape(batch_size,token_length,self.embed_size)
 
@@ -60,7 +60,7 @@ class SelfAttention(nn.Module):
         keys = keys.transpose(1,2)
         query = query.transpose(1,2)
         ## now shape -> (batch_size, heads, token_length, head_dim)
-        attn_output = self.scaled_dot_product_attention(self,query,keys,values,mask)
+        attn_output = self.scaled_dot_product_attention(query,keys,values,mask)
         ## attn_output shape -> (batch_size, heads, token_length, head_dim)
         output = self.combine_heads(attn_output)
         output = self.fc_out(output)

@@ -25,7 +25,8 @@ class Transformers(nn.Module):
         self.positional_encoding = PositionalEncoding(self.seq_len,self.embed_size)
         self.encoder = Encoder(self.embed_size,self.heads,self.ff_dim) ## here Nx = 1
         self.decoder = Decoder(self.embed_size,self.heads,self.ff_dim)
-        self.linear = nn.Linear(self.embed_size,self.output_vocab_size)
+        self.linear = nn.Linear(self.embed_size,self.vocab_size)
+
 
         ##sharing weights and embeddings
         self.linear.weight = self.embedding.weight
@@ -43,8 +44,10 @@ class Transformers(nn.Module):
         ## 1 1 1 0 0 treated as zero
         ## 2 1 1 1 0
         ## 3 1 1 1 1
-
-        hide_future_mask = (1-torch.triu(torch.ones(self.seq_len, self.seq_len),diagonal=1)).bool()
+        seq_length = output_mask.size(1)
+        hide_future_mask = (1-torch.triu(torch.ones(1,seq_length, seq_length),diagonal=1)).bool()
+        # print("output_mask shape:", output_mask.shape)
+        # print("hide_future_mask shape:", hide_future_mask.shape)
         output_mask = output_mask & hide_future_mask
         return input_mask,output_mask
 
@@ -55,9 +58,8 @@ class Transformers(nn.Module):
         encoder_op = self.encoder(ip_embed,input_mask)
         decoder_op = self.decoder(op_embed,encoder_op,input_mask,output_mask)
         linear_op = self.linear(decoder_op)
-        probab = torch.softmax(linear_op,dim=-1)
 
-        return probab
+        return linear_op
 
 
 

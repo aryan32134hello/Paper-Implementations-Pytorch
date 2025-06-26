@@ -20,12 +20,11 @@ class PositionalEncoding(nn.Module):
         div = torch.exp(torch.arange(0,self.embed_size,2)*-(np.log(10000)/self.embed_size))
         self.pe[:,0::2] = torch.sin(position*div)
         self.pe[:,1::2] = torch.cos(position*div)
-        
-        self.register_buffer('pe',self.pe)
-
-    
-    def forward(self,x):
         self.pe = self.pe.unsqueeze(0)
-        x = x + self.pe ## here it can happen that X has smaller max_len so we can slice the pe till max_len of X and then add it 
+
+    def forward(self,x):
+        # print("x shape:", x.shape)
+        # print("pe slice shape:", self.pe[:, :x.size(1), :].shape)
+        x = x + self.pe[:,:x.size(1),:] ## here it can happen that X has smaller max_len so we can slice the pe till max_len of X and then add it 
         return x
 
