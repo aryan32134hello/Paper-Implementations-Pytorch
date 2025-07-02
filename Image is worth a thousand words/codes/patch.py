@@ -4,7 +4,7 @@ import numpy as np
 
 class PatchEmbeddings(nn.Module):
     
-    def __init__(self, img_height, img_width, in_channels, patch_size = 16):
+    def __init__(self, img_height, img_width, in_channels, embed_dim, patch_size = 16):
         super(PatchEmbeddings,self).__init__()
         
         self.img_height = img_height
@@ -12,7 +12,7 @@ class PatchEmbeddings(nn.Module):
         self.in_channels = in_channels
         self.patch_size = patch_size
         self.num_patches = int((self.img_height*self.img_width)/(patch_size**2))
-        self.embed_size = self.patch_size * self.patch_size * 3
+        self.embed_size = embed_dim
         self.conv = nn.Conv2d(in_channels=self.in_channels,out_channels=self.embed_size,
                               kernel_size=self.patch_size,stride=self.patch_size)
         self.flatten = nn.Flatten(start_dim=2,end_dim=3)

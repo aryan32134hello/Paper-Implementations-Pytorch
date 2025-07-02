@@ -17,20 +17,20 @@ class MultiHeadAttention(nn.Module,):
         self.fc_out = nn.Linear(self.embed_dim,self.embed_dim)
 
     def split_head(self,x):
-        batch_size,token_len,embed_dim = x.shape()
+        batch_size,token_len,embed_dim = x.shape
         x = x.reshape(batch_size,token_len,self.num_heads,self.head_dim)
         return x
     
     def self_attention_product(self,key,query,value):
 
         qk_product = torch.matmul(query,key.transpose(2,3))/math.sqrt(self.head_dim)
-        softmax_op = torch.softmax(qk_product)
+        softmax_op = torch.softmax(qk_product,dim=-1) ## why dim = -1 
         final_product = torch.matmul(softmax_op,value)
         return final_product
 
     def combine_heads(self, x):
 
-        batch_size, num_heads, token_len, head_dim = x.shape()
+        batch_size, num_heads, token_len, head_dim = x.shape
         x = x.transpose(1,2)
         x = x.reshape(batch_size,token_len,self.embed_dim)
         return x
